@@ -1,0 +1,20 @@
+{
+  "name": "PhotoPrism Bulk Editor",
+  "version": "1.0.0",
+  "description": "Allows you to edit photo/video metadata in bulk",
+  "manifest_version": 3,
+  "author": "Blendan",
+  "action":{
+    "default_popup": "index.html",
+    "default_title": "Bulk Editor"
+  },
+  "permissions": [
+    "tabs",
+    "scripting",
+    "activeTab",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "sw.js"
+  }
+}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark" ng-app="batchEditorApp">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <script src="scripts/http_cdn.jsdelivr.net_npm_bootstrap@5.3.2_dist_js_bootstrap.bundle.js"></script>
+    <script src="scripts/http_ajax.googleapis.com_ajax_libs_angularjs_1.8.2_angular.js"></script>
+
+    <script src="app.js"></script>
+
+    <style>
+        html {
+            min-width: 550px;
+        }
+
+        .loading-bar {
+            width: 100%;
+            position: relative;
+            border-radius: 5px;
+            height: 2.5em;
+            overflow: hidden;
+        }
+
+        .loading-bar > .bar {
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: all 0.3s;
+        }
+
+        .loading-bar .progress {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) !important;
+            overflow: visible;
+        }
+    </style>
+</head>
+<body ng-controller="batchEditorController">
+
+<form class="m-3">
+    <table>
+        <tr>
+            <th></th>
+            <th>Field:</th>
+            <th>Value:</th>
+            <th>Action:</th>
+        </tr>
+        <tr ng-repeat="item in editors">
+            <td class="p-1">
+                <label>
+                    <input type="checkbox" ng-model="input[item.key].used" class="form-check-input"
+                           ng-disabled="phase != 0">
+                </label>
+            </td>
+            <td class="p-1">
+                {{item.key}}
+            </td>
+            <td class="p-1">
+                <label ng-switch="item.type" class="w-100">
+                    <select ng-switch-when="select" ng-model="input[item.key].value"
+                            ng-disabled="!input[item.key].used || phase != 0"
+                            class="form-select w-100"
+                            ng-change="item.onChange(input[item.key].value)">
+                        <option ng-repeat="o in item.options" ng-value="o">{{o}}</option>
+                    </select>
+                    <input ng-switch-default type="text" ng-model="input[item.key].value"
+                           class="form-control"
+                           ng-disabled="!input[item.key].used || phase != 0">
+                </label>
+            </td>
+            <td class="p-1">
+                <label class="w-100" ng-if="item.actions.length">
+                    <select ng-model="input[item.key].action" ng-disabled="!input[item.key].used || phase != 0"
+                            class="form-select w-100">
+                        <option ng-repeat="o in item.actions" ng-value="o">{{o}}</option>
+                    </select>
+                </label>
+            </td>
+        </tr>
+    </table>
+
+    <p ng-if="phase == 0 && doneCount" class="text-info">Changes have been applied to {{doneCount}} Images/Videos</p>
+
+    <div class="d-flex flex-row" ng-if="phase == 0">
+        <button type="button" class="btn btn-secondary flex-grow-1 me-1" ng-click="resetForm()">Reset</button>
+        <button type="button" class="btn btn-primary flex-grow-1 ms-1" ng-click="startApply(input)">Apply</button>
+    </div>
+
+    <p ng-if="phase == 2">
+        Apply changes to {{totalCount}} Images/Videos?
+        <br>
+        <span class="text-danger">
+            With "Apply & Save" Changes <strong>CANNOT be undone</strong>
+        </span>
+        <br>
+        Popup needs to stay open for Apply to complete
+        <br>
+        Use "Run Dry" for a preview of all changes without saving (pressing save or finish afterwards will only apply last change)
+    </p>
+    <div class="d-flex flex-row" ng-if="phase == 2">
+        <button type="button" class="btn btn-warning flex-grow-1 me-1" ng-click="doApply(true)">Apply & Save</button>
+        <button type="button" class="btn btn-primary flex-grow-1 ms-1" ng-click="doApply()">Run Dry</button>
+    </div>
+
+
+    <div class="loading-bar bg-secondary-subtle" ng-if="phase == 3">
+        <div class="bar bg-success" ng-style="{'width': (100 * (progress/(totalCount*2))) + '%'}"></div>
+        <div class="progress bg-success"><span>{{progress}}/{{totalCount*2}}</span></div>
+    </div>
+    <p class="text-info" ng-if="phase == 3">Checking selected items for selection errors</p>
+
+    <div class="loading-bar bg-secondary-subtle" ng-if="phase == 4">
+        <div class="bar bg-primary" ng-style="{'width': (100 * (progress/totalCount)) + '%'}"></div>
+        <div class="progress bg-primary"><span>{{progress}}/{{totalCount}}</span></div>
+    </div>
+    <p class="text-info" ng-if="phase == 4">
+        <strong>No Errors found</strong>
+        Making Changes
+    </p>
+
+    <p class="text-danger">{{errors}}</p>
+</form>
+
+
+</body>
+</html>
