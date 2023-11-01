@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Allows you to edit photo/video metadata in bulk",
   "manifest_version": 3,
-  "author": "Blendan",
+  "author": "Blendan1",
   "action":{
     "default_popup": "index.html",
     "default_title": "Bulk Editor"

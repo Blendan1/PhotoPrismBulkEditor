@@ -446,7 +446,14 @@ app.controller('batchEditorController', function ($scope) {
                 });
 
                 if(hasUnstack) {
-                    await callFunction(() => {
+                    await callFunction(async () => {
+                        document.querySelector("#tab-files > a").click()
+                    });
+
+                    await pause(1);
+
+                    await callFunction(async () => {
+
                         const buttons = document.querySelectorAll('button.action-unstack');
                         buttons.forEach(b => b.click());
                     });
