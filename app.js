@@ -435,19 +435,21 @@ app.controller('batchEditorController', function ($scope) {
                 dirty |= await callFunction(updateField, data, field);
             }
 
-            if (!dirty) {
+            if (!dirty && !hasUnstack) {
                 console.warn('No field was set. Nothing has changed.');
                 return;
             }
             if (save) {
-                await callFunction(() => {
-                    const applyButton = document.querySelector('button.action-apply');
-                    applyButton.click();
-                });
+                if (dirty) {
+                    await callFunction(() => {
+                        const applyButton = document.querySelector('button.action-apply');
+                        applyButton.click();
+                    });
+                }
 
-                if(hasUnstack) {
+                if (hasUnstack) {
                     await callFunction(async () => {
-                        document.querySelector("#tab-files > a").click()
+                        document.querySelector("#tab-files > a").click();
                     });
 
                     await pause(1);
@@ -457,6 +459,7 @@ app.controller('batchEditorController', function ($scope) {
                         const buttons = document.querySelectorAll('button.action-unstack');
                         buttons.forEach(b => b.click());
                     });
+
                 }
             }
             count++;
