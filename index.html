@@ -69,7 +69,7 @@
                             ng-change="item.onChange(input[item.key].value)">
                         <option ng-repeat="o in item.options" ng-value="o">{{o}}</option>
                     </select>
-                    <input ng-switch-default type="text" ng-model="input[item.key].value"
+                    <input ng-switch-when="text" type="text" ng-model="input[item.key].value"
                            class="form-control"
                            ng-disabled="!input[item.key].used || phase != 0">
                 </label>

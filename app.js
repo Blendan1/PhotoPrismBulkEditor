@@ -111,6 +111,9 @@ app.controller('batchEditorController', function ($scope) {
                 dayOptions.options = getDaysInMonth($scope.input["month"].value, value);
             },
         },
+        {
+            key: "unstack",
+        },
     ];
 
     function setDefault() {
@@ -422,15 +425,13 @@ app.controller('batchEditorController', function ($scope) {
         $scope.phase = 4;
         $scope.$applyAsync();
         do {
-            let dirty = false;
-
-            /*if (window.interrupt) {
-                alert('Execution interrupted by user.');
-                delete window.interrupt;
-                return;
-            }*/
+            let dirty = false, hasUnstack = false;
 
             for (let field of Object.keys(data)) {
+                if (field === "unstack") {
+                    hasUnstack = true;
+                    continue;
+                }
                 dirty |= await callFunction(updateField, data, field);
             }
 
@@ -443,6 +444,13 @@ app.controller('batchEditorController', function ($scope) {
                     const applyButton = document.querySelector('button.action-apply');
                     applyButton.click();
                 });
+
+                if(hasUnstack) {
+                    await callFunction(() => {
+                        const buttons = document.querySelectorAll('button.action-unstack');
+                        buttons.forEach(b => b.click());
+                    });
+                }
             }
             count++;
             $scope.progress = count;
