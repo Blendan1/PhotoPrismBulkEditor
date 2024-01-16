@@ -300,11 +300,11 @@ app.controller('batchEditorController', function ($scope) {
 
         if (!isEditorOpen) {
             // Opens the editor if it's closed
-            const isMenuOpen = await callFunction(() => {
-                const menuButton = document.querySelector(".v-dialog--active #tab-details");
-                return !!menuButton;
+            const isEditButtonVisible = await callFunction(() => {
+                const editButton = document.querySelector(".v-btn.action-edit");
+                return !!editButton;
             });
-            if (!isMenuOpen) {
+            if (!isEditButtonVisible) {
                 await callFunction(() => {
                     const menuButton = document.querySelector('.v-btn.action-menu');
                     menuButton.click();
