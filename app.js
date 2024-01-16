@@ -114,10 +114,15 @@ app.controller('batchEditorController', function ($scope) {
         {
             key: "unstack",
         },
+        {
+            key: "sanityCheck",
+            used: true,
+        },
     ];
 
     function setDefault() {
         $scope.input = {};
+
 
         $scope.editors.forEach(e => {
             if (!$scope.input[e.key]) {
@@ -132,7 +137,7 @@ app.controller('batchEditorController', function ($scope) {
                 input.action = e.default;
             }
 
-            input.used = false;
+            input.used = e.used || false;
         });
     }
 
@@ -418,7 +423,9 @@ app.controller('batchEditorController', function ($scope) {
         let count = 0;
 
         await goToFirstItem(false);
-        await checkTotalCount();
+        if('sanityCheck' in data){
+            await checkTotalCount();
+        }
 
         $scope.progress = 0;
         $scope.$applyAsync();
@@ -430,6 +437,9 @@ app.controller('batchEditorController', function ($scope) {
             for (let field of Object.keys(data)) {
                 if (field === "unstack") {
                     hasUnstack = true;
+                    continue;
+                }
+                if(field === "sanityCheck"){
                     continue;
                 }
                 dirty |= await callFunction(updateField, data, field);
