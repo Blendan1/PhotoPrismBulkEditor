@@ -299,6 +299,30 @@ app.controller('batchEditorController', function ($scope) {
         });
 
         if (!isEditorOpen) {
+            // Opens the editor if it's closed
+            const isMenuOpen = await callFunction(() => {
+                const menuButton = document.querySelector(".v-dialog--active #tab-details");
+                return !!menuButton;
+            });
+            if (!isMenuOpen) {
+                await callFunction(() => {
+                    const menuButton = document.querySelector('.v-btn.action-menu');
+                    menuButton.click();
+                });
+                await pause(1);
+            }
+            await callFunction(() => {
+                const editButton = document.querySelector('.v-btn.action-edit');
+                editButton.click();
+            });
+            await pause(1);
+        }
+
+        const isEditorOpenAgain = await callFunction(() => {
+            const element = document.querySelector(".v-dialog--active #tab-details");
+            return !!element;
+        });
+        if (!isEditorOpenAgain) {
             throw "Editor needs to be open with the first image/video";
         }
     }
